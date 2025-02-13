@@ -14,46 +14,60 @@ function isPrimitive(json: Json): json is JsonPrimitive {
   return typeof json !== "object" || json === null
 }
 
-function isNonPrimitive(json: Json): json is JsonNonPrimitive {
-  return !isPrimitive(json)
-}
-
 // [\n\s*\s*
-function createArraySpacing(newline: number, space: number, depth: number) {
-  return newline + depth * space + space + 2
+function createArraySpacing(
+  context: Pick<Context, "newline" | "space">,
+  state: Pick<State, "depth">
+) {
+  return context.newline + state.depth * context.space + context.space + 2
 }
 
 // {\n\s*\s*"property":s
 function createRecordSpacing(
-  newline: number,
-  space: number,
-  depth: number,
-  property: string
+  property: string,
+  context: Pick<Context, "newline" | "space">,
+  state: Pick<State, "depth">
 ) {
-  return newline + depth * space + space + property.length + 5
+  return (
+    context.newline +
+    state.depth * context.space +
+    context.space +
+    property.length +
+    5
+  )
 }
 
 function createObjectSpacing(
   target: JsonNonPrimitive,
-  newline: number,
-  space: number,
-  depth: number,
-  property: string
+  property: string,
+  context: Pick<Context, "newline" | "space">,
+  state: Pick<State, "depth">
 ) {
   if (Array.isArray(target)) {
-    return createArraySpacing(newline, space, depth)
+    return createArraySpacing(context, state)
   } else {
-    return createRecordSpacing(newline, space, depth, property)
+    return createRecordSpacing(property, context, state)
   }
+}
+
+// recursivley called that doesn't change over time.
+interface Context {
+  events: EventTarget
+  newline: 0 | 1
+  space: number
+}
+
+// recursively provided that changes over time.
+interface State {
+  offset: number
+  depth: number
 }
 
 export function factory<T extends JsonNonPrimitive>(
   object: T,
-  context: { events: EventTarget; offset: number; depths: number }
+  context: Context,
+  state: State
 ): T {
-  const newline = 1
-  const space = 2
-
   return new Proxy(object, {
     get(target, property, receiver) {
       if (typeof property !== "string") {
@@ -66,18 +80,11 @@ export function factory<T extends JsonNonPrimitive>(
         return value
       }
 
-      let left = createObjectSpacing(
-        target,
-        newline,
-        space,
-        context.depths,
-        property
-      )
+      let spacing = createObjectSpacing(target, property, context, state)
 
-      const result = factory(value, {
-        events: context.events,
-        offset: context.offset + left,
-        depths: context.depths + 1,
+      const result = factory(value, context, {
+        offset: state.offset + spacing,
+        depth: state.depth + 1,
       })
 
       return result
@@ -87,25 +94,19 @@ export function factory<T extends JsonNonPrimitive>(
         throw new Error("Expected property to be a string")
       }
 
-      let left = createObjectSpacing(
-        target,
-        newline,
-        space,
-        context.depths,
-        property
-      )
+      let spacing = createObjectSpacing(target, property, context, state)
 
       const remove = JSON.stringify(
         target[property as never],
         null,
-        space
+        context.space
       ).length
 
-      const stringified = JSON.stringify(value, null, space)
+      const stringified = JSON.stringify(value, null, context.space)
 
       context.events.dispatchEvent(
         new CustomEvent("set", {
-          detail: { offset: context.offset + left, remove, stringified },
+          detail: { offset: state.offset + spacing, remove, stringified },
         })
       )
 
@@ -116,10 +117,16 @@ export function factory<T extends JsonNonPrimitive>(
 
 // assume 2 for space fr now.
 export function create<T extends JsonRecord | JsonArray>(
-  object: T
+  object: T,
+  space: number = 2
 ): { emitter: EventTarget; target: T } {
   const emitter = new EventTarget()
-  const target = factory(object, { events: emitter, offset: 0, depths: 0 })
+  const newline = Number(!!space) as 0 | 1
+  const target = factory(
+    object,
+    { events: emitter, newline, space },
+    { depth: 0, offset: 0 }
+  )
 
   return { emitter, target }
 }

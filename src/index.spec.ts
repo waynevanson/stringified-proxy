@@ -70,3 +70,27 @@ describe(create, () => {
     created.target.big.booty = "Marcey!"
   })
 })
+
+test("object in object string splice", () => {
+  expect.assertions(1)
+
+  const item = {
+    big: { booty: "Brucey!" },
+  }
+  const created = create(item)
+
+  //{n  "big": {n    "booty":s
+  created.emitter.addEventListener("set", (data) => {
+    const str = JSON.stringify(item, null, 2).split("")
+
+    str.splice(
+      data.detail.offset,
+      data.detail.remove,
+      ...data.detail.stringified.split("")
+    )
+
+    expect(str.join("")).toBe("")
+  })
+
+  created.target.big.booty = "Marcey!"
+})
