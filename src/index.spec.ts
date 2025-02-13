@@ -1,74 +1,75 @@
 import { describe, test, expect, vi } from "vitest"
-import { createWrap } from "./index"
+import { createWrap } from "./index.js"
 
 describe(createWrap, () => {
   test("objects", () => {
-    expect.assertions(1)
     const onUpdate = vi.fn()
+    const wrap = createWrap({ space: 2, onUpdate })
 
-    const created = createWrap({ name: "Jason Bjorne" }, { space: 2, onUpdate })
+    const input = { name: "Jason Bjorne" }
+    const output = wrap(input)
 
-    created.emitter.addEventListener("set", (data) => {
-      expect(data.detail).toStrictEqual({
-        offset: 12,
-        remove: 14,
-        stringified: '"Jean"',
-      })
+    output.name = "Jean"
+
+    expect(onUpdate).toHaveBeenCalledTimes(1)
+    expect(onUpdate).toHaveBeenCalledWith({
+      offset: 12,
+      remove: 14,
+      value: '"Jean"',
     })
-
-    created.target.name = "Jean"
   })
 
   test("arrays", () => {
-    expect.assertions(1)
+    const onUpdate = vi.fn()
+    const wrap = createWrap({ space: 2, onUpdate })
 
-    const created = createWrap(["Jason Bjorne"])
+    const input = ["Jason Bjorne"]
+    const output = wrap(input)
 
-    created.emitter.addEventListener("set", (data) => {
-      expect(data.detail).toStrictEqual({
-        offset: 5,
-        remove: 14,
-        stringified: '"Jean"',
-      })
+    output[0] = "Jean"
+
+    expect(onUpdate).toHaveBeenCalledTimes(1)
+    expect(onUpdate).toHaveBeenCalledWith({
+      offset: 5,
+      remove: 14,
+      value: '"Jean"',
     })
-
-    created.target[0] = "Jean"
   })
 
   test("array in array", () => {
-    expect.assertions(1)
+    const onUpdate = vi.fn()
+    const wrap = createWrap({ space: 2, onUpdate })
 
-    const created = createWrap([["Jason Bjorne"]])
+    const input = [["Jason Bjorne"]]
+    const output = wrap(input)
 
-    //[\n  [\n    "
-    created.emitter.addEventListener("set", (data) => {
-      expect(data.detail).toStrictEqual({
-        offset: 12,
-        remove: 14,
-        stringified: '"Jean"',
-      })
+    output[0][0] = "Jean"
+
+    expect(onUpdate).toHaveBeenCalledTimes(1)
+    expect(onUpdate).toHaveBeenCalledWith({
+      offset: 12,
+      remove: 14,
+      value: '"Jean"',
     })
-
-    created.target[0][0] = "Jean"
   })
 
   test("object in object", () => {
-    expect.assertions(1)
+    const onUpdate = vi.fn()
+    const wrap = createWrap({ space: 2, onUpdate })
 
-    const created = createWrap({
+    const input = {
       big: { booty: "Brucey!" },
-    })
+    }
+    const output = wrap(input)
 
-    //{n  "big": {n    "booty":s
-    created.emitter.addEventListener("set", (data) => {
-      expect(data.detail).toStrictEqual({
-        offset: 26,
-        remove: 9,
-        stringified: '"Marcey!"',
-      })
-    })
+    output.big.booty = "Marcey!"
 
-    created.target.big.booty = "Marcey!"
+    expect(onUpdate).toHaveBeenCalledTimes(1)
+    expect(onUpdate).toHaveBeenCalledWith({
+      offset: 26,
+      remove: 9,
+      value: '"Marcey!"',
+    })
   })
 })
 
@@ -95,3 +96,5 @@ test.skip("object in object string splice", () => {
 
   created.target.big.booty = "Marcey!"
 })
+
+test.todo("delete")

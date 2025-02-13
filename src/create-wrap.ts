@@ -1,5 +1,5 @@
-import { JsonNonPrimitive, Json } from "./types"
-import { Context, Payload, wrapper } from "./wrapper"
+import { JsonNonPrimitive, Json } from "./types.js"
+import { Context, Payload, wrapper } from "./wrapper.js"
 
 export interface Options {
   space: number

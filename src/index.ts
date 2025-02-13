@@ -1,1 +1,1 @@
-export { createWrap, Options } from "./create-wrap"
+export { createWrap, Options } from "./create-wrap.js"

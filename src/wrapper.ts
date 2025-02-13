@@ -1,4 +1,4 @@
-import { isPrimitive, Json, JsonNonPrimitive } from "./types"
+import { isPrimitive, Json, JsonNonPrimitive } from "./types.js"
 
 // [\n\s*\s*
 function createArraySpacing(
