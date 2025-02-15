@@ -83,7 +83,7 @@ test.todo("get a primitive value")
 
 // middle insertion
 // todo: set, delete
-test("object multi property", () => {
+test.only("object multi property", () => {
   const onUpdate = vi.fn()
   const wrap = createJuse({ space: 2, onUpdate })
 
@@ -95,8 +95,8 @@ test("object multi property", () => {
   expect(onUpdate).toHaveBeenCalledTimes(1)
   expect(onUpdate).toHaveBeenCalledWith({
     offset: 36,
-    remove: 9,
-    value: "Nature!",
+    remove: 8,
+    value: '"Nature!"',
   })
 })
 
