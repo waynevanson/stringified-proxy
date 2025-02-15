@@ -8,7 +8,7 @@ function createValuesSpacing(
 ): number {
   return Object.values(target)
     .slice(0, index)
-    .map((json) => context.stringify(json).length)
+    .map((json) => context.stringify(json as never).length)
     .reduce((left, right) => left + right, 0)
 }
 

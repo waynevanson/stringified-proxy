@@ -1,9 +1,9 @@
 export type JsonPrimitive = string | number | boolean | null
 
-export type JsonArray = ReadonlyArray<Json>
+export type JsonArray = ReadonlyArray<Json> | Array<Json>
 
-export interface JsonRecord {
-  readonly [property: string]: Json
+export type JsonRecord = {
+  [Property in string]?: Json
 }
 
 export type JsonNonPrimitive = JsonArray | JsonRecord
