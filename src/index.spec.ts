@@ -1,10 +1,10 @@
 import { describe, test, expect, vi } from "vitest"
-import { createWrap } from "./index.js"
+import { createJuse } from "./index.js"
 
-describe(createWrap, () => {
+describe(createJuse, () => {
   test("objects", () => {
     const onUpdate = vi.fn()
-    const wrap = createWrap({ space: 2, onUpdate })
+    const wrap = createJuse({ space: 2, onUpdate })
 
     const input = { name: "Jason Bjorne" }
     const output = wrap(input)
@@ -21,7 +21,7 @@ describe(createWrap, () => {
 
   test("arrays", () => {
     const onUpdate = vi.fn()
-    const wrap = createWrap({ space: 2, onUpdate })
+    const wrap = createJuse({ space: 2, onUpdate })
 
     const input = ["Jason Bjorne"]
     const output = wrap(input)
@@ -38,7 +38,7 @@ describe(createWrap, () => {
 
   test("array in array", () => {
     const onUpdate = vi.fn()
-    const wrap = createWrap({ space: 2, onUpdate })
+    const wrap = createJuse({ space: 2, onUpdate })
 
     const input = [["Jason Bjorne"]]
     const output = wrap(input)
@@ -55,7 +55,7 @@ describe(createWrap, () => {
 
   test("object in object", () => {
     const onUpdate = vi.fn()
-    const wrap = createWrap({ space: 2, onUpdate })
+    const wrap = createJuse({ space: 2, onUpdate })
 
     const input = {
       big: { booty: "Brucey!" },
@@ -82,5 +82,22 @@ test.todo("symbol as property delete")
 test.todo("get a primitive value")
 
 // middle insertion
-test.todo("object multi property")
+// todo: set, delete
+test("object multi property", () => {
+  const onUpdate = vi.fn()
+  const wrap = createJuse({ space: 2, onUpdate })
+
+  const input = { hello: "World!", goodbye: "Earth!" }
+  const output = wrap(input)
+
+  output.goodbye = "Nature!"
+
+  expect(onUpdate).toHaveBeenCalledTimes(1)
+  expect(onUpdate).toHaveBeenCalledWith({
+    offset: 36,
+    remove: 9,
+    value: "Nature!",
+  })
+})
+
 test.todo("array multi property")
