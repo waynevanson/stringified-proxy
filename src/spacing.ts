@@ -1,6 +1,24 @@
 import { JsonArray, JsonNonPrimitive, JsonRecord } from "./json.js"
 import { Context, State } from "./types.js"
 
+function createValuesSpacing(
+  target: JsonNonPrimitive,
+  index: number,
+  context: Pick<Context, "stringify">
+): number {
+  return Object.values(target)
+    .slice(0, index)
+    .map((json) => context.stringify(json).length)
+    .reduce((left, right) => left + right, 0)
+}
+
+function createPrefixSpacing(
+  context: Pick<Context, "newline" | "space">,
+  state: Pick<State, "depth">
+) {
+  return context.newline + (state.depth + 1) * context.space
+}
+
 // [\n\s*\s*
 export function createArraySpacing(
   target: JsonArray,
@@ -14,12 +32,9 @@ export function createArraySpacing(
   // end of each property
   const commas = index
 
-  const values = Object.values(target)
-    .slice(0, index)
-    .map((json) => context.stringify(json).length)
-    .reduce((left, right) => left + right, 0)
+  const values = createValuesSpacing(target, index, context)
 
-  const prefix = context.newline + (state.depth + 1) * context.space
+  const prefix = createPrefixSpacing(context, state)
   const prefixes = count * prefix
   const left = 1
 
@@ -48,12 +63,9 @@ export function createRecordSpacing(
   // before each property value
   const spaces = count
 
-  const values = Object.values(target)
-    .slice(0, index)
-    .map((json) => context.stringify(json).length)
-    .reduce((left, right) => left + right, 0)
+  const values = createValuesSpacing(target, index, context)
 
-  const prefix = context.newline + (state.depth + 1) * context.space
+  const prefix = createPrefixSpacing(context, state)
   const prefixes = count * prefix
   const left = 1
 
