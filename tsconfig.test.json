@@ -3,5 +3,5 @@
   "compilerOptions": {
     "composite": true
   },
-  "exclude": ["src/**/*!(.spec).ts"]
+  "exclude": ["src/**/*!(.spec|.test).ts"]
 }

@@ -53,7 +53,7 @@ export function createRecordSpacing(
 
   const properties = Object.keys(target)
     .slice(0, count)
-    .map((property) => property.length + 2)
+    .map((property) => context.stringify(property).length)
     .reduce((left, right) => left + right, 0)
 
   // end of each property
