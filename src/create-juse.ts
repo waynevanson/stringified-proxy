@@ -1,6 +1,6 @@
 import { JsonNonPrimitive, Json } from "./json.js"
 import { Context, Payload } from "./types.js"
-import { wrapper } from "./juse.js"
+import { juser } from "./juser.js"
 
 export interface Options {
   space: number
@@ -23,9 +23,9 @@ const state = { depth: 0, offset: 0 }
  * @param options
  * @returns
  */
-export function createWrap(options: Options) {
-  return function wrap<T extends JsonNonPrimitive>(json: T): T {
+export function createJuse(options: Options) {
+  return function juse<T extends JsonNonPrimitive>(json: T): T {
     const context = createContextFromOptions(options)
-    return wrapper(json, context, state)
+    return juser(json, context, state)
   }
 }

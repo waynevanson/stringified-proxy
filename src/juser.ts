@@ -2,7 +2,7 @@ import { isPrimitive, Json, JsonNonPrimitive } from "./json.js"
 import { createObjectSpacing } from "./spacing.js"
 import { Context, State } from "./types.js"
 
-export function wrapper<T extends JsonNonPrimitive>(
+export function juser<T extends JsonNonPrimitive>(
   object: T,
   context: Context,
   state: State
@@ -24,7 +24,7 @@ export function wrapper<T extends JsonNonPrimitive>(
       const depth = state.depth + 1
       state = { offset, depth }
 
-      return wrapper(value, context, state)
+      return juser(value, context, state)
     },
     set(target, property, value) {
       if (typeof property !== "string") {

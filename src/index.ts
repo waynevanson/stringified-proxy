@@ -1,1 +1,1 @@
-export { createWrap, Options } from "./create-juse.js"
+export { createJuse as createWrap, Options } from "./create-juse.js"
