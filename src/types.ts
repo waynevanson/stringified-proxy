@@ -1,15 +1,21 @@
-export type JsonPrimitive = string | number | boolean | null
+import { Json } from "./json.js"
 
-export type JsonArray = Array<Json>
-
-export interface JsonRecord {
-  [property: string]: Json
+export interface Payload {
+  offset: number
+  remove: number
+  value: string
 }
 
-export type JsonNonPrimitive = JsonArray | JsonRecord
+// recursivley called that doesn't change over time.
+export interface Context {
+  onUpdate(payload: Payload): void
+  newline: 0 | 1
+  space: number
+  stringify(value: Json): string
+}
 
-export type Json = JsonNonPrimitive | JsonPrimitive
-
-export function isPrimitive(json: Json): json is JsonPrimitive {
-  return typeof json !== "object" || json === null
+// recursively provided that changes over time.
+export interface State {
+  offset: number
+  depth: number
 }

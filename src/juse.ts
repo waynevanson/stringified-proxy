@@ -1,63 +1,6 @@
-import { isPrimitive, Json, JsonNonPrimitive } from "./types.js"
-
-// [\n\s*\s*
-function createArraySpacing(
-  context: Pick<Context, "newline" | "space">,
-  state: Pick<State, "depth">
-) {
-  return context.newline + state.depth * context.space + context.space + 2
-}
-
-// {\n\s*\s*"property":s
-function createRecordSpacing(
-  property: string,
-  context: Pick<Context, "newline" | "space">,
-  state: Pick<State, "depth">
-) {
-  return (
-    context.newline +
-    state.depth * context.space +
-    context.space +
-    property.length +
-    5
-  )
-}
-
-/**
- * @todo Conside how many lines we need to traverse.
- */
-function createObjectSpacing(
-  target: JsonNonPrimitive,
-  property: string,
-  context: Pick<Context, "newline" | "space">,
-  state: Pick<State, "depth">
-) {
-  if (Array.isArray(target)) {
-    return createArraySpacing(context, state)
-  } else {
-    return createRecordSpacing(property, context, state)
-  }
-}
-
-// recursivley called that doesn't change over time.
-export interface Context {
-  onUpdate(payload: Payload): void
-  newline: 0 | 1
-  space: number
-  stringify(value: Json): string
-}
-
-// recursively provided that changes over time.
-export interface State {
-  offset: number
-  depth: number
-}
-
-export interface Payload {
-  offset: number
-  remove: number
-  value: string
-}
+import { isPrimitive, Json, JsonNonPrimitive } from "./json.js"
+import { createObjectSpacing } from "./spacing.js"
+import { Context, State } from "./types.js"
 
 export function wrapper<T extends JsonNonPrimitive>(
   object: T,

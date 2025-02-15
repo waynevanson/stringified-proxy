@@ -73,28 +73,14 @@ describe(createWrap, () => {
   })
 })
 
-test.skip("object in object string splice", () => {
-  expect.assertions(1)
-
-  const item = {
-    big: { booty: "Brucey!" },
-  }
-  const created = createWrap(item)
-
-  //{n  "big": {n    "booty":s
-  created.emitter.addEventListener("set", (data) => {
-    const str = JSON.stringify(item, null, 2).split("")
-
-    str.splice(
-      data.detail.offset,
-      data.detail.remove,
-      ...data.detail.stringified.split("")
-    )
-
-    expect(str.join("")).toBe("")
-  })
-
-  created.target.big.booty = "Marcey!"
-})
-
 test.todo("delete")
+
+test.todo("symbol as property get")
+test.todo("symbol as property set")
+test.todo("symbol as property delete")
+
+test.todo("get a primitive value")
+
+// middle insertion
+test.todo("object multi property")
+test.todo("array multi property")
