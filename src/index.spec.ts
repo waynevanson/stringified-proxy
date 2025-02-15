@@ -30,7 +30,7 @@ describe(createJuse, () => {
 
     expect(onUpdate).toHaveBeenCalledTimes(1)
     expect(onUpdate).toHaveBeenCalledWith({
-      offset: 5,
+      offset: 4,
       remove: 14,
       value: '"Jean"',
     })
@@ -47,7 +47,7 @@ describe(createJuse, () => {
 
     expect(onUpdate).toHaveBeenCalledTimes(1)
     expect(onUpdate).toHaveBeenCalledWith({
-      offset: 12,
+      offset: 10,
       remove: 14,
       value: '"Jean"',
     })
@@ -83,7 +83,7 @@ test.todo("get a primitive value")
 
 // middle insertion
 // todo: set, delete
-test.only("object multi property", () => {
+test("object multi property", () => {
   const onUpdate = vi.fn()
   const wrap = createJuse({ space: 2, onUpdate })
 
@@ -100,4 +100,20 @@ test.only("object multi property", () => {
   })
 })
 
-test.todo("array multi property")
+test("array multi property", () => {
+  const onUpdate = vi.fn()
+  const wrap = createJuse({ space: 2, onUpdate })
+
+  const input = ["hello", "world!"]
+
+  const output = wrap(input)
+
+  output[1] = "earth"
+
+  expect(onUpdate).toHaveBeenCalledTimes(1)
+  expect(onUpdate).toHaveBeenCalledWith({
+    offset: 15,
+    remove: 8,
+    value: '"earth"',
+  })
+})
