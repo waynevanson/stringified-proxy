@@ -2,8 +2,8 @@ import { Json } from "./json.js"
 
 export interface Payload {
   offset: number
-  remove: number
-  value: string
+  previous: string
+  current: string
 }
 
 // recursivley called that doesn't change over time.

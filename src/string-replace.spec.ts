@@ -163,6 +163,6 @@ function getPaths(json: JsonNonPrimitive): Array<Array<string>> {
   return paths
 }
 
-test.prop([createFactory()])("", (params) => {
+test.prop([createFactory()], { timeout: 5000 })("", (params) => {
   expect(params.stringified.output).toEqual(params.stringified.input)
 })

@@ -15,10 +15,10 @@ export function createJuseStringReplacer(
 
     const context = createContextFromOptions({
       space: options.space,
-      onUpdate({ offset, remove, value }) {
+      onUpdate({ offset, previous, current }) {
         const left = result.slice(0, offset)
-        const middle = value
-        const right = result.slice(offset + remove)
+        const middle = current
+        const right = result.slice(offset + previous.length)
 
         result = left + middle + right
         options.onUpdate(result)

@@ -20,7 +20,7 @@ export function juser<T extends JsonNonPrimitive>(
       }
 
       const spacing = createObjectSpacing(target, property, context, state)
-      const offset = state.offset + spacing
+      const offset = state.offset + spacing + 1
       const depth = state.depth + 1
       state = { offset, depth }
 
@@ -33,13 +33,16 @@ export function juser<T extends JsonNonPrimitive>(
 
       // what happens when we go deeper?
       // json stringify doesn't account for being in a really deep object
-      const remove = context.stringify(target[property as never]).length
+      const previous = context
+        .stringify(target[property as never])
+        .replaceAll(/\n/g, "\n".padEnd(state.depth * context.space + 1, " "))
 
       const spacing = createObjectSpacing(target, property, context, state)
       const stringified = context.stringify(value)
-      const offset = state.offset + spacing
-      const payload = { offset, remove, value: stringified }
+      const offset = state.offset + spacing + 1
+      const payload = { offset, previous, current: stringified }
 
+      console.log(payload)
       context.onUpdate(payload)
 
       return Reflect.set(target, property, value)
@@ -49,9 +52,11 @@ export function juser<T extends JsonNonPrimitive>(
         throw new Error("Expected property to be a string")
       }
 
-      const remove = context.stringify(target[property as never]).length
+      const previous = context
+        .stringify(target[property as never])
+        .replaceAll(/\n/g, "\n".padEnd(state.depth * context.space + 1, " "))
 
-      context.onUpdate({ offset: state.offset, remove, value: "" })
+      context.onUpdate({ offset: state.offset, previous, current: "" })
 
       return Reflect.deleteProperty(target, property)
     },
