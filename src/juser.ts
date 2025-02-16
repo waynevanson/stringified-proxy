@@ -37,12 +37,13 @@ export function juser<T extends JsonNonPrimitive>(
         .stringify(target[property as never])
         .replaceAll(/\n/g, "\n".padEnd(state.depth * context.space + 1, " "))
 
+      // \n that are not in ""; \n out of ""
+
       const spacing = createObjectSpacing(target, property, context, state)
       const stringified = context.stringify(value)
-      const offset = state.offset + spacing + 1
+      const offset = state.offset + spacing
       const payload = { offset, previous, current: stringified }
 
-      console.log(payload)
       context.onUpdate(payload)
 
       return Reflect.set(target, property, value)
