@@ -61,7 +61,7 @@ export function createRecordSpacing(
   // before each property value
   const colons = count
   // before each property value
-  const spaces = count
+  const spaces = count * context.newline
 
   const values = createValuesSpacing(target, index, context)
 

@@ -19,6 +19,7 @@
   "packageManager": "pnpm@9.1.4+sha1.2432063d815cfa88fd9fef1d85a445e3f609851d",
   "devDependencies": {
     "@fast-check/vitest": "^0.1.5",
+    "@types/node": "^20",
     "@vitest/coverage-v8": "3.0.5",
     "typescript": "^5.7.3",
     "vitest": "^3.0.5"

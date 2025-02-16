@@ -10,7 +10,7 @@ export function juser<T extends JsonNonPrimitive>(
   return new Proxy(object, {
     get(target, property, receiver) {
       if (typeof property !== "string") {
-        throw new Error("Expected property to be a string")
+        return Reflect.get(target, property, receiver)
       }
 
       const value = Reflect.get(target, property, receiver) as Json
@@ -31,6 +31,8 @@ export function juser<T extends JsonNonPrimitive>(
         throw new Error("Expected property to be a string")
       }
 
+      // what happens when we go deeper?
+      // json stringify doesn't account for being in a really deep object
       const remove = context.stringify(target[property as never]).length
 
       const spacing = createObjectSpacing(target, property, context, state)
